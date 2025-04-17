@@ -5,6 +5,7 @@ import yfinance as yf
 import pandas as pd
 from openpyxl import Workbook, load_workbook
 from openpyxl.chart import BarChart, Reference
+from openpyxl.styles import PatternFill
 
 # NIFTY 50 tickers list
 NIFTY_50_TICKERS = [
@@ -46,12 +47,21 @@ def write_current_snapshot_with_chart(stock_data: List[Tuple[str, float, float, 
     ws = wb.active
     ws.title = "Stock Data"
 
+    green_fill: PatternFill = PatternFill(start_color="C6EFCE", end_color="C6EFCE", fill_type="solid")
+    red_fill: PatternFill = PatternFill(start_color="FFC7CE", end_color="FFC7CE", fill_type="solid")
+
+
     # Write header
     ws.append(["Stock", "Open", "Current", "Change (%)"])
 
     # Write stock data
-    for row in stock_data:
+    for i, row in enumerate(stock_data, start=2):
         ws.append(row)
+        change_cell = ws.cell(row=i, column=4)
+        if row[3] > 0:
+            change_cell.fill = green_fill
+        elif row[3] < 0:
+            change_cell.fill = red_fill
 
     # Calculate average percentage change
     avg_change = round(sum(row[3] for row in stock_data) / len(stock_data), 2)
