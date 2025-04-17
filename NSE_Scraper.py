@@ -1,6 +1,6 @@
 import time
 import os
-from typing import List
+from typing import List, Tuple
 import yfinance as yf
 import pandas as pd
 from openpyxl import Workbook, load_workbook
@@ -23,7 +23,7 @@ NIFTY_50_TICKERS = [
 EXCEL_FILE = "nifty50_latest_snapshot.xlsx"
 
 
-def fetch_stock_data(ticker: str) -> Tuple[float, float] | Tuple[None, None] : 
+def fetch_stock_data(ticker: str) -> Tuple[float, float]: 
     try:
         stock = yf.Ticker(ticker)
         data = stock.history(period="1d")
