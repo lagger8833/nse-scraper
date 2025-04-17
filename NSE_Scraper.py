@@ -1,27 +1,29 @@
 import time
 import os
+from typing import List
 import yfinance as yf
 import pandas as pd
 from openpyxl import Workbook, load_workbook
 from openpyxl.chart import BarChart, Reference
 
-# NIFTY 50 tickers (use your full list here)
+# NIFTY 50 tickers list
 NIFTY_50_TICKERS = [
     "RELIANCE.NS", "TCS.NS", "HDFCBANK.NS", "BHARTIARTL.NS", "ICICIBANK.NS", 
-"HINDUNILVR.NS", "INFY.NS", "SBIN.NS", "KOTAKBANK.NS", "ITC.NS", 
-"SUNPHARMA.NS", "LT.NS", "BAJFINANCE.NS", "HCLTECH.NS", "MARUTI.NS", 
-"NTPC.NS", "ULTRACEMCO.NS", "AXISBANK.NS", "M&M.NS", "BAJAJFINSV.NS",
-"ONGC.NS",  "TITAN.NS", "POWERGRID.NS", "ADANIPORTS.NS", "ADANIENT.NS",
-"WIPRO.NS", "JSWSTEEL.NS", "ASIANPAINT.NS", "COALINDIA.NS", "NESTLEIND.NS", 
-"TATAMOTORS.NS", "BAJAJ-AUTO.NS", "GRASIM.NS", "TRENT.NS", "SBILIFE.NS", 
-"TATASTEEL.NS", "EICHERMOT.NS", "HDFCLIFE.NS", "ZOMATO.NS", "BEL.NS", 
-"HEROMOTOCO.NS","TECHM.NS", "HINDALCO.NS", "SHRIRAMFIN.NS", "TATACONSUM.NS",
-"APOLLOHOSP.NS", "DRREDDY.NS", "CIPLA.NS", "JIOFIN.NS", "INDUSINDBK.NS"
+    "HINDUNILVR.NS", "INFY.NS", "SBIN.NS", "KOTAKBANK.NS", "ITC.NS", 
+    "SUNPHARMA.NS", "LT.NS", "BAJFINANCE.NS", "HCLTECH.NS", "MARUTI.NS", 
+    "NTPC.NS", "ULTRACEMCO.NS", "AXISBANK.NS", "M&M.NS", "BAJAJFINSV.NS",
+    "ONGC.NS",  "TITAN.NS", "POWERGRID.NS", "ADANIPORTS.NS", "ADANIENT.NS",
+    "WIPRO.NS", "JSWSTEEL.NS", "ASIANPAINT.NS", "COALINDIA.NS", "NESTLEIND.NS", 
+    "TATAMOTORS.NS", "BAJAJ-AUTO.NS", "GRASIM.NS", "TRENT.NS", "SBILIFE.NS", 
+    "TATASTEEL.NS", "EICHERMOT.NS", "HDFCLIFE.NS", "ZOMATO.NS", "BEL.NS", 
+    "HEROMOTOCO.NS","TECHM.NS", "HINDALCO.NS", "SHRIRAMFIN.NS", "TATACONSUM.NS",
+    "APOLLOHOSP.NS", "DRREDDY.NS", "CIPLA.NS", "JIOFIN.NS", "INDUSINDBK.NS"
 ]
 
 EXCEL_FILE = "nifty50_latest_snapshot.xlsx"
 
-def fetch_stock_data(ticker):
+
+def fetch_stock_data(ticker: str) -> Tuple[float, float] | Tuple[None, None] : 
     try:
         stock = yf.Ticker(ticker)
         data = stock.history(period="1d")
@@ -39,7 +41,7 @@ def fetch_stock_data(ticker):
         return None, None
 
 
-def write_current_snapshot_with_chart(stock_data):
+def write_current_snapshot_with_chart(stock_data: List[Tuple[str, float, float, float]]) -> None:
     wb = Workbook()
     ws = wb.active
     ws.title = "Stock Data"
@@ -84,7 +86,7 @@ if __name__ == "__main__":
     
     try:
         while True:
-            all_stock_data = []
+            all_stock_data : List[Tuple[str, float, float, float]] = []
 
             for ticker in NIFTY_50_TICKERS:
                 open_price, current_price = fetch_stock_data(ticker)
@@ -104,6 +106,6 @@ if __name__ == "__main__":
             df = pd.DataFrame(all_stock_data, columns=["Stock", "Open", "Current", "Change (%)"])
             print(df)
 
-            time.sleep(10)
+            time.sleep(60)
     except KeyboardInterrupt:
         print("Stopped by user.")
